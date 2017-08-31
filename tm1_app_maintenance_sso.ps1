@@ -1,6 +1,7 @@
 # Execute TM1 application maintenance utility with Single Signon CAM secured environments
 # We need to acquire a CAM passport and then call application maintenance bat file with this authentication
 # see this technote for more details
+#   https://www-304.ibm.com/support/entdocview.wss?uid=swg1PI11160
 # We are doing the following in each call:
 # 1) Acquiring a global mutually exclusive lock (MutEx) to ensure that multiple calls to update applications are 
 #    serialised and we don't get an 'Another application update job is already running for this application or server' error
@@ -81,13 +82,11 @@ else
 	{
 		$operationString = "-op $operation"
 	}
-### START MUTEX HERE
+### Acquire mutex
 $Mutex = New-Object System.Threading.Mutex($false, "Global\TM1AppMaintenanceMutex")
 IF ($Mutex.WaitOne($maxWaitInMinutes*60*1000))
 {
 	Write-Log "INFO" "$application_id : We will try to $operationString for the application $application_id" $logFile
-	#Write-Log "INFO" "$application_id : We can start updating the application, no other update is running" $logFile
-	#Write-Log "INFO" "Trying to login to Cognos portal on $cognos_gateway_url $user $password $domain" $logFile
 	$cookiejar = New-Object System.Net.CookieContainer
 	$webrequest = [System.Net.HTTPWebRequest]::Create($cognos_gateway_url);
 	if ($error.count -gt 0)
