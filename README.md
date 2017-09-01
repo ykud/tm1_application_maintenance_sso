@@ -11,7 +11,8 @@ http://ykud.com/blog/cognos/tm1-cognos/tm1-application-maintenance-utility-and-s
 Script does the following:
 1) Acquires a global mutually exclusive lock (MutEx) to ensure that multiple calls to update applications are serialised and we don't get an 'Another application update job is already running for this application or server' error
 2) Logins to Cognos BI portal with provided credentials and grab CAM passport cookie
-3) Runs application_maintenance.bat with CAM passport with just got
+3) Runs application_maintenance.bat with CAM passport
+4) Releases the lock, allowing the other applications to be updated
 
 Call syntax:
 powershell.exe "path\tm1_application_maintenance_sso.ps1" "log_folder\" "cognos_bi_gateway" 'AD Namespace' "user" "password" 'path_to_app_maintenance.bat' tm1_application_server  'Application Name'  importrights  'rights_file'
